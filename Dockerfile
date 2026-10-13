@@ -1,5 +1,5 @@
 # Sử dụng OpenJDK làm môi trường chạy
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 # Thiết lập thư mục làm việc bên trong container
 WORKDIR /app
