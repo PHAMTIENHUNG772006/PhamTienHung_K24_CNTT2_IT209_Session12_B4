@@ -10,7 +10,6 @@ permissions:
   packages: write
 
 jobs:
-  # Job 1: Build source code, tạo jar và đẩy Docker image lên GHCR
   build-image:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
@@ -23,10 +22,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'maven'
+          cache: 'gradle'
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar -x test
 
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
@@ -49,7 +51,6 @@ jobs:
           tags: |
             ghcr.io/${{ steps.string_ops.outputs.lowercase }}:latest
 
-  # Job 2: Kết nối VPS qua SSH để tự động cập nhật và chạy Container mới
   deploy-vps:
     name: Deploy to Remote VPS
     needs: build-image
